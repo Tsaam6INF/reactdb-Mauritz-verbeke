@@ -1,35 +1,49 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React, { useState, useEffect } from "react";
+import Login from "./components/Login";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [users, setUsers] = useState([]); // Voeg deze regel toe
+
+  useEffect(() => {
+    fetch("https://jsonplaceholder.typicode.com/users")
+      .then((response) => response.json())
+      .then((data) => setUsers(data)) // Hier zetten we de opgehaalde data in de state
+      .catch((error) =>
+        console.error("Fout bij ophalen van gebruikers:", error)
+      );
+  }, []);
+
+  const [name, setName] = useState("");
+  const [password, setPassword] = useState("");
+
+  const updateName = (data) => {
+    setName(data);
+  };
+
+  const updatePassword = (data) => {
+    setPassword(data);
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    console.log(`Username: ${name}, Password: ${password}`);
+  };
 
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <Login
+        updateName={updateName}
+        updatePassword={updatePassword}
+        handleSubmit={handleSubmit}
+      />
+      <h2>Gebruikers:</h2>
+      <ul>
+        {users.map((user) => (
+          <li key={user.id}>{user.name}</li>
+        ))}
+      </ul>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
